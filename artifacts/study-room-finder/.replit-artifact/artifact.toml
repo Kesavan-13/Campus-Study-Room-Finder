@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Study Room Finder"
+description = "A live study-room finder for IIIT Sri City that reads the Monsoon 2026 timetable, tracks local time, and recommends currently vacant classrooms and labs by longest uninterrupted availability."
+version = "1.0.0"
+id = "artifacts/study-room-finder"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21425
+
+[services.development]
+run = "pnpm --filter @workspace/study-room-finder run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/study-room-finder", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/study-room-finder/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21425"
+BASE_PATH = "/"
