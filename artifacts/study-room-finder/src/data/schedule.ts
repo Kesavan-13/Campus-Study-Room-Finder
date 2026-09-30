@@ -183,6 +183,13 @@ export type RoomAvailability = {
   sourceNote: string | null;
 };
 
+function getRoomPriority(roomId: string): number {
+  if (roomId.startsWith('G0')) return 0;
+  if (roomId.startsWith('B0')) return 1;
+  if (roomId.startsWith('Lab')) return 2;
+  return 3;
+}
+
 export type ScheduleSnapshot = {
   dayName: string;
   dayKey: DayKey | null;
@@ -328,6 +335,9 @@ export function getAvailabilitySnapshot(now: Date): ScheduleSnapshot {
       },
     ];
   }).sort((a, b) => {
+    const priorityDifference = getRoomPriority(a.room.id) - getRoomPriority(b.room.id);
+    if (priorityDifference) return priorityDifference;
+
     const durationDifference = b.availableForMinutes - a.availableForMinutes;
     return durationDifference || a.room.id.localeCompare(b.room.id, 'en', {
       numeric: true,
